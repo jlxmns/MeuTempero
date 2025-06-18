@@ -1,6 +1,7 @@
 # meu_tempero
 
 A new Flutter project.
+csv utilizado como DB placeholde: https://github.com/cweber/cookbook/blob/master/recipes.csv
 
 ## Getting Started
 
