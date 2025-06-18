@@ -21,5 +21,9 @@ Future<List<Map<String, dynamic>>> carregarCsv() async {
 
 Future<List<String>> extrairUnicos(String chave) async {
   final listaMap = await carregarCsv();
-  return listaMap.map((mapa) => mapa[chave].toString()).toSet().toList();
+  return listaMap
+      .map((mapa) => mapa[chave]?.toString().trim() ?? '')
+      .where((v) => v.isNotEmpty)
+      .toSet()
+      .toList();
 }
