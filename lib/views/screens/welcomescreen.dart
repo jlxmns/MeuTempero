@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // Import necessário para SystemUiOverlayStyle
+import 'package:flutter/services.dart';
 import 'homepage.dart';
 import 'package:meu_tempero/views/utils/AppColor.dart';
 

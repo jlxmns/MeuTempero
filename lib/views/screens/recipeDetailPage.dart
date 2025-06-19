@@ -12,13 +12,17 @@ class RecipeDetailPage extends StatefulWidget {
 
 class _RecipeDetailPageState extends State<RecipeDetailPage> {
   late List<bool> checkedIngredients;
+  late List<String> ingredients;
 
   @override
   void initState() {
     super.initState();
-    checkedIngredients = _buildIngredientList().map((_) => false).toList();
+    ingredients = _buildIngredientList();
+    checkedIngredients = List<bool>.filled(ingredients.length, false);
   }
 
+  
+  
   List<String> _buildIngredientList() {
     final List<String> ingredientes = [];
     for (int i = 1; i <= 19; i++) {
@@ -38,168 +42,219 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
     return ingredientes;
   }
 
+  
+  
+  List<String> _buildDirectionsList(String directions) {
+    return directions.split('\n').where((step) => step.trim().isNotEmpty).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final ingredientes = _buildIngredientList();
-    final modoPreparo = widget.receita['Directions'] ?? 'Sem instruções.';
-    final tituloReceita = widget.receita['Title'] ?? 'Sem título';
-    final categoria = widget.receita['Category'];
+    final directionsList = _buildDirectionsList(widget.receita['Directions'] ?? '');
+    final title = widget.receita['Title'] ?? 'Sem título';
+    final category = widget.receita['Category'];
+    final imageUrl = 'assets/images/${widget.receita['Image_Name']}.jpg';
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: AppColor.primaryExtraSoft,
-      appBar: AppBar(
-        leading: IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.chevron_left)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              height: 10,
-            ),
-            // Nome da receita centralizado
-            Center(
-              child: Text(
-                tituloReceita,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
+      backgroundColor: Colors.white,
+      body: CustomScrollView(
+        slivers: [
+          
+          SliverAppBar(
+            expandedHeight: 300.0,
+            pinned: true,
+            elevation: 0,
+            backgroundColor: AppColor.primary,
+            leading: Padding(
+              padding: const EdgeInsets.all(8.0),
+              
+              child: CircleAvatar(
+                backgroundColor: Colors.black.withOpacity(0.5),
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () => Navigator.of(context).pop(),
                 ),
               ),
             ),
-            if (categoria != null) ...[
-              const SizedBox(height: 8),
-              Center(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 4,
-                    horizontal: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColor.secondary,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    categoria,
-                    style: TextStyle(
-                      color: AppColor.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-            const SizedBox(height: 32),
-
-            // Ingredientes box
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: AppColor.secondary,
-                borderRadius: BorderRadius.circular(18),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColor.primary.withOpacity(0.08),
-                    blurRadius: 6,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(18),
-              margin: const EdgeInsets.only(bottom: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Center(
-                    child: Text(
-                      "Ingredientes",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: AppColor.primary,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Image.asset(
+                imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  
+                  return Container(
+                    color: Colors.grey[300],
+                    child: Center(
+                      child: Icon(
+                        Icons.restaurant_menu,
+                        color: Colors.grey[500],
+                        size: 80,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  ingredientes.isNotEmpty
-                      ? ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: ingredientes.length,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(height: 6),
-                          itemBuilder: (context, i) => CheckboxListTile(
-                            controlAffinity: ListTileControlAffinity.leading,
-                            title: Text(
-                              ingredientes[i],
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                            value: checkedIngredients[i],
-                            activeColor: AppColor.primary,
-                            checkColor: AppColor.secondary,
-                            onChanged: (val) {
-                              setState(() {
-                                checkedIngredients[i] = val ?? false;
-                              });
-                            },
-                          ),
-                        )
-                      : const Text(
-                          "Nenhum ingrediente informado.",
-                          textAlign: TextAlign.center,
-                        ),
-                ],
+                  );
+                },
               ),
             ),
-
-            // Modo de preparo box
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: AppColor.secondary,
-                borderRadius: BorderRadius.circular(18),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColor.primary.withOpacity(0.08),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(18),
-              margin: const EdgeInsets.only(bottom: 40),
+          ),
+          
+          SliverToBoxAdapter(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(
-                    child: Text(
-                      "Modo de preparo",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: AppColor.primary,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
+                  
                   Text(
-                    modoPreparo,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 16),
+                    title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 28,
+                      color: Colors.grey[850],
+                    ),
                   ),
+                  const SizedBox(height: 8),
+
+                  
+                  if (category != null)
+                    Chip(
+                      label: Text(category),
+                      backgroundColor: AppColor.secondary,
+                      labelStyle: TextStyle(
+                        color: AppColor.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  const SizedBox(height: 24),
+
+                  
+                  _buildSectionTitle("Ingredientes"),
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColor.primaryExtraSoft,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: ingredients.length,
+                      itemBuilder: (context, index) {
+                        return _buildIngredientItem(index);
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  
+                  _buildSectionTitle("Modo de Preparo"),
+                  const SizedBox(height: 16),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: directionsList.length,
+                    itemBuilder: (context, index) {
+                      return _buildDirectionStep(index, directionsList[index]);
+                    },
+                  ),
+                  const SizedBox(height: 30),
                 ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
+        color: AppColor.primary,
+      ),
+    );
+  }
+
+  
+  Widget _buildIngredientItem(int index) {
+    bool isChecked = checkedIngredients[index];
+    return InkWell(
+      onTap: () {
+        setState(() {
+          checkedIngredients[index] = !isChecked;
+        });
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Row(
+          children: [
+            Checkbox(
+              value: isChecked,
+              onChanged: (bool? value) {
+                setState(() {
+                  checkedIngredients[index] = value ?? false;
+                });
+              },
+              activeColor: AppColor.primary,
+              checkColor: Colors.white,
+              visualDensity: VisualDensity.compact,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                ingredients[index],
+                style: TextStyle(
+                  fontSize: 16,
+                  color: isChecked ? Colors.grey[500] : Colors.grey[800],
+                  
+                  decoration: isChecked
+                      ? TextDecoration.lineThrough
+                      : TextDecoration.none,
+                ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  
+  Widget _buildDirectionStep(int index, String step) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          
+          CircleAvatar(
+            radius: 14,
+            backgroundColor: AppColor.primary,
+            child: Text(
+              '${index + 1}',
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          
+          Expanded(
+            child: Text(
+              step,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[800],
+                height: 1.5, 
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
