@@ -98,7 +98,7 @@ class HomePage extends StatelessWidget {
       case 'Bolos':
         return 'assets/images/cake.png';
       case 'Biscoitos':
-        return 'assets/images/cookie.png';
+        return 'assets/images/cookies.png';
       case 'Tortas':
         return 'assets/images/pie.png';
       case 'Saladas e Molhos':
@@ -106,7 +106,7 @@ class HomePage extends StatelessWidget {
       case 'Sopas':
         return 'assets/images/soup.png';
       case 'Pratos Principais':
-        return 'assets/images/main_dishes.png';
+        return 'assets/images/dishes.png';
       default:
         
         return 'assets/images/default_background.png';
@@ -116,8 +116,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
-      backgroundColor: Colors.teal, 
       appBar: AppBar(
         leading: IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.chevron_left)),
         iconTheme: IconThemeData(color: Colors.white),
@@ -140,28 +138,68 @@ class HomePage extends StatelessWidget {
             
             return Padding(
               padding: const EdgeInsets.all(12.0),
-              child: GridView.builder(
+              child: ListView.builder(
                 itemCount: categorias.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,    
-                  crossAxisSpacing: 16, 
-                  mainAxisSpacing: 16,  
-                  childAspectRatio: 0.8,
-                ),
                 itemBuilder: (context, index) {
                   final categoria = categorias[index];
-                  return CategoryCard(
-                    categoryName: categoria,
-                    imagePath: _getImageAssetPath(categoria),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
+                  return Card(
+                    elevation: 5,
+                    margin: const EdgeInsets.only(bottom:16),
+                    clipBehavior: Clip.antiAlias,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
                               CategoryRecipesPage(category: categoria),
+                          ),
+                        );
+                      },
+
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Image.asset(
+                          _getImageAssetPath(categoria),
+                          height: 150,
+                          width: double.infinity,
+                          fit: BoxFit.contain,
+
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              height: 180,
+                              color: Colors.grey[200],
+                              child: Center(
+                                child: Icon(
+                                  Icons.image_not_supported_outlined, 
+                                  color: Colors.grey[400],
+                                  size: 50,
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
+
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                          child: Text(
+                            categoria,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 17,
+                              color: Colors.grey[850],
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+
+                    )
                   );
                 },
               ),

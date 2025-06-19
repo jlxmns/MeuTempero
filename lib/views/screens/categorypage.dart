@@ -54,8 +54,6 @@ class CategoryRecipesPage extends StatelessWidget {
                 ),
               );
             }
-
-            
             
             return ListView.builder(
               padding: const EdgeInsets.all(16),

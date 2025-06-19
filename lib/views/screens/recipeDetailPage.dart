@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/AppColor.dart';
 
 class RecipeDetailPage extends StatefulWidget {
@@ -13,16 +14,45 @@ class RecipeDetailPage extends StatefulWidget {
 class _RecipeDetailPageState extends State<RecipeDetailPage> {
   late List<bool> checkedIngredients;
   late List<String> ingredients;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     ingredients = _buildIngredientList();
-    checkedIngredients = List<bool>.filled(ingredients.length, false);
+    _loadCheckedIngredients();
   }
 
-  
-  
+  Future<void> _loadCheckedIngredients() async {
+    final prefs = await SharedPreferences.getInstance();
+    final recipeTitle = widget.receita['Title'] ?? 'sem_titulo';
+    final key = 'checked_ingredients_$recipeTitle';
+
+    final savedData = prefs.getStringList(key);
+
+    if (savedData != null) {
+      checkedIngredients = savedData.map((item) => item == 'true').toList();
+    } else {
+      checkedIngredients = List<bool>.filled(ingredients.length, false);
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _saveCheckedIngredients() async {
+    final prefs = await SharedPreferences.getInstance();
+    final recipeTitle = widget.receita['Title'] ?? 'sem_titulo';
+    final key = 'checked_ingredients_$recipeTitle';
+
+    final dataToSave =
+        checkedIngredients.map((item) => item.toString()).toList();
+    await prefs.setStringList(key, dataToSave);
+  }
+
   List<String> _buildIngredientList() {
     final List<String> ingredientes = [];
     for (int i = 1; i <= 19; i++) {
@@ -42,15 +72,17 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
     return ingredientes;
   }
 
-  
-  
   List<String> _buildDirectionsList(String directions) {
-    return directions.split('\n').where((step) => step.trim().isNotEmpty).toList();
+    return directions
+        .split('\n')
+        .where((step) => step.trim().isNotEmpty)
+        .toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    final directionsList = _buildDirectionsList(widget.receita['Directions'] ?? '');
+    final directionsList =
+        _buildDirectionsList(widget.receita['Directions'] ?? '');
     final title = widget.receita['Title'] ?? 'Sem título';
     final category = widget.receita['Category'];
     final imageUrl = 'assets/images/${widget.receita['Image_Name']}.jpg';
@@ -59,7 +91,6 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
       backgroundColor: Colors.white,
       body: CustomScrollView(
         slivers: [
-          
           SliverAppBar(
             expandedHeight: 300.0,
             pinned: true,
@@ -67,7 +98,6 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
             backgroundColor: AppColor.primary,
             leading: Padding(
               padding: const EdgeInsets.all(8.0),
-              
               child: CircleAvatar(
                 backgroundColor: Colors.black.withOpacity(0.5),
                 child: IconButton(
@@ -81,7 +111,6 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                 imageUrl,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
-                  
                   return Container(
                     color: Colors.grey[300],
                     child: Center(
@@ -96,14 +125,12 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
               ),
             ),
           ),
-          
           SliverToBoxAdapter(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  
                   Text(
                     title,
                     style: TextStyle(
@@ -113,8 +140,6 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                     ),
                   ),
                   const SizedBox(height: 8),
-
-                  
                   if (category != null)
                     Chip(
                       label: Text(category),
@@ -125,8 +150,6 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                       ),
                     ),
                   const SizedBox(height: 24),
-
-                  
                   _buildSectionTitle("Ingredientes"),
                   const SizedBox(height: 16),
                   Container(
@@ -135,18 +158,20 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                       color: AppColor.primaryExtraSoft,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: ingredients.length,
-                      itemBuilder: (context, index) {
-                        return _buildIngredientItem(index);
-                      },
-                    ),
+                    child: _isLoading
+                        ? Center(
+                            child: CircularProgressIndicator(
+                                color: AppColor.primary))
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: ingredients.length,
+                            itemBuilder: (context, index) {
+                              return _buildIngredientItem(index);
+                            },
+                          ),
                   ),
                   const SizedBox(height: 24),
-
-                  
                   _buildSectionTitle("Modo de Preparo"),
                   const SizedBox(height: 16),
                   ListView.builder(
@@ -167,7 +192,6 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
     );
   }
 
-  
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
@@ -179,13 +203,13 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
     );
   }
 
-  
   Widget _buildIngredientItem(int index) {
     bool isChecked = checkedIngredients[index];
     return InkWell(
       onTap: () {
         setState(() {
           checkedIngredients[index] = !isChecked;
+          _saveCheckedIngredients();
         });
       },
       child: Padding(
@@ -197,6 +221,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
               onChanged: (bool? value) {
                 setState(() {
                   checkedIngredients[index] = value ?? false;
+                  _saveCheckedIngredients();
                 });
               },
               activeColor: AppColor.primary,
@@ -210,7 +235,6 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                 style: TextStyle(
                   fontSize: 16,
                   color: isChecked ? Colors.grey[500] : Colors.grey[800],
-                  
                   decoration: isChecked
                       ? TextDecoration.lineThrough
                       : TextDecoration.none,
@@ -223,14 +247,12 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
     );
   }
 
-  
   Widget _buildDirectionStep(int index, String step) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          
           CircleAvatar(
             radius: 14,
             backgroundColor: AppColor.primary,
@@ -243,14 +265,13 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
             ),
           ),
           const SizedBox(width: 16),
-          
           Expanded(
             child: Text(
               step,
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey[800],
-                height: 1.5, 
+                height: 1.5,
               ),
             ),
           ),
