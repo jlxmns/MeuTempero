@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/csv_reader.dart';
 import 'categorypage.dart';
+import '../utils/AppColor.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -9,8 +10,14 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Categorias'),
-        backgroundColor: Colors.teal,
+        leading: IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.chevron_left)),
+        iconTheme: IconThemeData(color: Colors.white),
+        centerTitle: true,
+        title: const Text(
+          'Categorias',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: AppColor.primary,
       ),
       body: FutureBuilder<List<String>>(
         future: extrairUnicos('Category'),
