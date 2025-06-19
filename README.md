@@ -86,5 +86,5 @@ Contribuições são o que tornam a comunidade de código aberto um lugar incrí
 3.  Faça o *Commit* (`git commit -m 'Adicionando sua-feature'`)
 4.  Faça o *Push* (`git push origin feature/sua-feature`)
 5.  Abra um *Pull Request*
-6.  
+   
 ---
