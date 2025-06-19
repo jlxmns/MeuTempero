@@ -117,16 +117,14 @@ class HomePage extends StatelessWidget {
       // Optional: Make the AppBar transparent for a more modern look
       backgroundColor: Colors.teal, // A dark background color
       appBar: AppBar(
+        leading: IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.chevron_left)),
+        iconTheme: IconThemeData(color: Colors.white),
+        centerTitle: true,
         title: const Text(
           'Categorias',
-          style: TextStyle(
-            color: Colors.white, // Changed to white for better contrast
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.transparent, // Makes AppBar see-through
-        elevation: 0, // Removes the shadow
-        foregroundColor: Colors.white,
+        backgroundColor: AppColor.primary,
       ),
       body: FutureBuilder<List<String>>(
         future: extrairUnicos('Category'),

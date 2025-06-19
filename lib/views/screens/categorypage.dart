@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/csv_reader.dart';
-import 'recipeDetailPage.dart'; // ajuste o caminho conforme seu projeto
+import 'recipeDetailPage.dart';
+import '../utils/AppColor.dart';
 
 class CategoryRecipesPage extends StatelessWidget {
   final String category;
@@ -11,8 +12,14 @@ class CategoryRecipesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Receitas: $category'),
-        backgroundColor: Colors.teal,
+        leading: IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.chevron_left)),
+        iconTheme: IconThemeData(color: Colors.white),
+        centerTitle: true,
+        title: Text(
+          'Receitas: $category',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: AppColor.primary,
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: carregarCsv(),

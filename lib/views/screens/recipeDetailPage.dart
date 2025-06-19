@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../utils/AppColor.dart'; // ajuste se o caminho for diferente no seu projeto
+import '../utils/AppColor.dart';
 
 class RecipeDetailPage extends StatefulWidget {
   final Map<String, dynamic> receita;
@@ -46,10 +46,12 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
     final categoria = widget.receita['Category'];
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       backgroundColor: AppColor.primaryExtraSoft,
       appBar: AppBar(
-        backgroundColor: AppColor.primary,
-        title: Text(tituloReceita, textAlign: TextAlign.center),
+        leading: IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.chevron_left)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -57,6 +59,9 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Container(
+              height: 10,
+            ),
             // Nome da receita centralizado
             Center(
               child: Text(
