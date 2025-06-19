@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'homepage.dart';
+import 'package:meu_tempero/views/utils/AppColor.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -10,9 +11,37 @@ class WelcomeScreen extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset(
-            'assets/images/bg.jpg',
-            fit: BoxFit.cover,
+          Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: AssetImage(
+                      'assets/images/bg.jpg'
+                    ),
+                  )
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  gradient: LinearGradient(
+                    begin: FractionalOffset.topCenter,
+                    end: FractionalOffset.bottomCenter,
+                    colors: [
+                      Colors.grey.withAlpha(10),
+                      AppColor.primary,
+                    ],
+                    stops: [
+                      0.0,
+                      1.0,
+                    ]
+                  )
+                ),
+              )
+            ],
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
