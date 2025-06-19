@@ -95,16 +95,18 @@ class HomePage extends StatelessWidget {
   // Helper function to get the correct image for each category
   String _getImageAssetPath(String categoryText) {
     switch (categoryText) {
-      case 'Cakes':
+      case 'Bolos':
         return 'assets/images/cake.png';
-      case 'Cookies':
+      case 'Biscoitos':
         return 'assets/images/cookie.png';
-      case 'Pies':
+      case 'Tortas':
         return 'assets/images/pie.png';
-      case 'Salads and Dressings':
+      case 'Saladas e Molhos':
         return 'assets/images/salad.png';
-      case 'Soup':
+      case 'Sopas':
         return 'assets/images/soup.png';
+      case 'Pratos Principais':
+        return 'assets/images/main_dishes.png';
       default:
         // Return a default image in case one is missing
         return 'assets/images/default_background.png';
