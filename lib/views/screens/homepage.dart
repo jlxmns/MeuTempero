@@ -157,7 +157,8 @@ class HomePage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => CategoryRecipesPage(category: categoria),
+                          builder: (_) =>
+                              CategoryRecipesPage(category: categoria),
                         ),
                       );
                     },

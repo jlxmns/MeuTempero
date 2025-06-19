@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../data/csv_reader.dart';
+import 'recipeDetailPage.dart'; // ajuste o caminho conforme seu projeto
 
 class CategoryRecipesPage extends StatelessWidget {
   final String category;
@@ -26,7 +27,9 @@ class CategoryRecipesPage extends StatelessWidget {
                 .toList();
 
             if (receitas.isEmpty) {
-              return const Center(child: Text('Nenhuma receita nesta categoria.'));
+              return const Center(
+                child: Text('Nenhuma receita nesta categoria.'),
+              );
             }
 
             return ListView.builder(
@@ -39,6 +42,14 @@ class CategoryRecipesPage extends StatelessWidget {
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   child: ListTile(
                     title: Text(receita['Title'] ?? 'Sem título'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => RecipeDetailPage(receita: receita),
+                        ),
+                      );
+                    },
                   ),
                 );
               },

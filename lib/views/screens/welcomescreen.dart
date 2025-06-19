@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // Import necessário para SystemUiOverlayStyle
 import 'homepage.dart';
 import 'package:meu_tempero/views/utils/AppColor.dart';
 
@@ -7,7 +8,12 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+      ),
+      child: Scaffold(
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -124,6 +130,7 @@ class WelcomeScreen extends StatelessWidget {
           ),
         ],
       ),
+    ),
     );
   }
 }
